@@ -1,0 +1,48 @@
+{
+  "name": "Chromium Extension Dev Environment (VS Code) - ARM64",
+
+  // Base image: Ubuntu with ARM64 support (adjust tag if needed)
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+
+
+  "features": {
+    // Lightweight GUI support
+    "ghcr.io/devcontainers/features/desktop-lite:1": {},
+
+    // Latest LTS Node.js
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+
+    // Common utilities with advanced Zsh and Oh-My-Zsh
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "installOhMyZshConfig": true,
+      "configureZshAsDefaultShell": true
+    }
+  },
+
+  // Necessary sandbox flag for Chromium
+  "runArgs": ["--security-opt", "seccomp=unconfined"],
+
+  "forwardPorts": [
+    6080,
+    9222
+  ],
+
+  // Install Chromium from apt repositories after container creation
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y chromium" 
+  //Note did not include --no-sandbox option, since already run with lowered security
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscodevim.vim",
+        "iganbold.superdesign", //"Cursor for design", uses lot of API credits
+        //"saoudrizwan.claude-dev", //Cline
+	      "openai.chatgpt", //OpenAI Codex
+      ]
+    }
+  }
+}
