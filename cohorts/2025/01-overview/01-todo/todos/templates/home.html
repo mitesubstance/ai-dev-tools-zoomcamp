@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}TODO List{% endblock %}
+
+{% block content %}
+<div class="nav">
+    <a href="{% url 'todo_create' %}" class="btn btn-success">➕ Add New TODO</a>
+</div>
+
+{% if todos %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #34495e; color: white;">
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Status</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Title</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Description</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Due Date</th>
+            <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for todo in todos %}
+        <tr style="{% if todo.is_completed %}background-color: #d4edda;{% endif %}">
+            <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                {% if todo.is_completed %}
+                    ✅ Complete
+                {% else %}
+                    ⏳ Pending
+                {% endif %}
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd; {% if todo.is_completed %}text-decoration: line-through;{% endif %}">
+                <strong>{{ todo.title }}</strong>
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd;">
+                {{ todo.description|truncatewords:15 }}
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd;">
+                {% if todo.due_date %}
+                    {{ todo.due_date|date:"M d, Y" }}
+                {% else %}
+                    <em>No due date</em>
+                {% endif %}
+            </td>
+            <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
+                <a href="{% url 'todo_toggle' todo.pk %}" class="btn btn-small btn-success">
+                    {% if todo.is_completed %}↩️ Reopen{% else %}✅ Complete{% endif %}
+                </a>
+                <a href="{% url 'todo_update' todo.pk %}" class="btn btn-small">✏️ Edit</a>
+                <a href="{% url 'todo_delete' todo.pk %}" class="btn btn-small btn-danger">🗑️ Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div style="text-align: center; padding: 40px; background-color: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+    <h2 style="color: #6c757d;">No TODOs yet!</h2>
+    <p style="color: #6c757d; margin-bottom: 20px;">Start by creating your first TODO.</p>
+    <a href="{% url 'todo_create' %}" class="btn btn-success">➕ Add Your First TODO</a>
+</div>
+{% endif %}
+
+<div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #6c757d;">
+    <p>Total TODOs: {{ todos|length }} | Completed: {{ todos|selectattr:"is_completed"|list|length }}</p>
+</div>
+{% endblock %}

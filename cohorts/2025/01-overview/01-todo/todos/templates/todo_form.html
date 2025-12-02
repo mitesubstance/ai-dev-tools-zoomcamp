@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit TODO{% else %}Create TODO{% endif %}{% endblock %}
+
+{% block content %}
+<div class="nav">
+    <a href="{% url 'todo_list' %}" class="btn">← Back to List</a>
+</div>
+
+<h2>{% if form.instance.pk %}Edit TODO{% else %}Create New TODO{% endif %}</h2>
+
+<form method="post" style="max-width: 600px; margin: 0 auto;">
+    {% csrf_token %}
+    
+    <div style="margin-bottom: 20px;">
+        <label for="id_title" style="display: block; margin-bottom: 5px; font-weight: bold;">Title:</label>
+        {{ form.title }}
+        {% if form.title.errors %}
+            <div style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                {{ form.title.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label for="id_description" style="display: block; margin-bottom: 5px; font-weight: bold;">Description:</label>
+        {{ form.description }}
+        {% if form.description.errors %}
+            <div style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                {{ form.description.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label for="id_due_date" style="display: block; margin-bottom: 5px; font-weight: bold;">Due Date:</label>
+        {{ form.due_date }}
+        {% if form.due_date.errors %}
+            <div style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                {{ form.due_date.errors }}
+            </div>
+        {% endif %}
+        <small style="color: #6c757d; display: block; margin-top: 5px;">Optional - Format: YYYY-MM-DD</small>
+    </div>
+    
+    {% if form.instance.pk %}
+    <div style="margin-bottom: 20px;">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+            {{ form.is_completed }}
+            <span style="margin-left: 8px; font-weight: bold;">Mark as completed</span>
+        </label>
+        {% if form.is_completed.errors %}
+            <div style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                {{ form.is_completed.errors }}
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <div style="margin-top: 30px;">
+        <button type="submit" class="btn btn-success">💾 Save TODO</button>
+        <a href="{% url 'todo_list' %}" class="btn">Cancel</a>
+    </div>
+</form>
+
+<style>
+    input[type="text"], textarea, input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+    textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
