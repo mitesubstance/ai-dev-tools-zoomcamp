@@ -17,13 +17,25 @@ A fully functional TODO application built with Django, featuring CRUD operations
 
 ## Installation & Setup
 
-### 1. Install Django
+### 1. Set Up Virtual Environment (Recommended)
+
+```bash
+# Create virtual environment
+python -m venv .venv
+
+# Activate it
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+You should see `(.venv)` prefix in your terminal.
+
+### 2. Install Django
 
 ```bash
 pip install django
 ```
 
-### 2. Navigate to Project Directory
+### 3. Navigate to Project Directory
 
 ```bash
 cd cohorts/2025/01-overview/01-todo
