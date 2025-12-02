@@ -1,20 +1,21 @@
 {
-  "name": "Chromium Extension Dev Environment (VS Code) - ARM64",
+  "name": "Django Dev Environment (uv) + Remote Browser",
 
-  // Base image: Ubuntu with ARM64 support (adjust tag if needed)
-  "image": "mcr.microsoft.com/devcontainers/base:debian",
-
+  // SWITCHED: Now using the Dockerfile instead of a direct image
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
 
   "features": {
-    // Lightweight GUI support
+    // 1. Desktop Lite: The GUI desktop environment (Fluxbox/noVNC)
     "ghcr.io/devcontainers/features/desktop-lite:1": {},
 
-    // Latest LTS Node.js
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts"
+    // 2. Python: Latest stable version (3.12) for Django
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
     },
 
-    // Common utilities with advanced Zsh and Oh-My-Zsh
+    // 3. Common Utils: Zsh, git, etc.
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
       "installOhMyZsh": true,
@@ -23,25 +24,29 @@
     }
   },
 
-  // Necessary sandbox flag for Chromium
+  // Security arg required for Chromium to run smoothly
   "runArgs": ["--security-opt", "seccomp=unconfined"],
 
   "forwardPorts": [
-    6080,
-    9222
+    6080, // noVNC: Access the container's Desktop GUI here
+    8000, // Django Development Server
   ],
 
-  // Install Chromium from apt repositories after container creation
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y chromium" 
-  //Note did not include --no-sandbox option, since already run with lowered security
+  // Combined Install:
+  // 1. Update apt
+  // 2. Install Chromium (for the browser)
+  // (Removed 'uv' curl command since it is now in the Dockerfile)
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y chromium",
 
   "customizations": {
     "vscode": {
       "extensions": [
         "vscodevim.vim",
         "iganbold.superdesign", //"Cursor for design", uses lot of API credits
-        //"saoudrizwan.claude-dev", //Cline
-	      "openai.chatgpt", //OpenAI Codex
+        "saoudrizwan.claude-dev", //Cline
+        //"openai.chatgpt", //OpenAI Codex
+        "ms-python.python",
+        "ms-python.debugpy" 
       ]
     }
   }
