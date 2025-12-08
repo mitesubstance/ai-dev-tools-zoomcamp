@@ -9,6 +9,9 @@ Before writing code, you must:
 2.  **Read `PRODUCT_SPECS.md`**: Understand the specific requirements for the current task.
 3.  **Read `DECISIONS.md`**: Ensure your solution does not violate past architectural decisions.
 4.  **Update `SESSION_LOG.md`**: Write down your plan for this specific session.
+    - **NOTE**: `SESSION_LOG.md` is ephemeral working memory and is **NOT version controlled** (excluded in `.gitignore`)
+    - It prevents commit noise and merge conflicts between different environments
+    - Archive important session notes to `docs/archive/` if needed for future reference
 
 ## 3. Coding Standards
 

@@ -73,7 +73,7 @@ If you are an AI assistant helping with this project, please review the followin
 * **[DECISIONS.md](./DECISIONS.md)**: ADRs - Do not violate agreed-upon architectural decisions.
 * **[PRODUCT_SPECS.md](./PRODUCT_SPECS.md)**: Functional requirements and acceptance criteria.
 * **[IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md)**: Global roadmap - Update this when phases are complete.
-* **[SESSION_LOG.md](./SESSION_LOG.md)**: Your scratchpad. Use this to track immediate progress and errors.
+* **[SESSION_LOG.md](./SESSION_LOG.md)**: Your ephemeral scratchpad (NOT version controlled - see `.gitignore`). Use this to track immediate progress and errors.
 
 ## 📚 Homework Questions
 

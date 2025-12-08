@@ -23,38 +23,38 @@ This document outlines the step-by-step implementation roadmap for the Collabora
 
 ---
 
-## Phase 1: Project Setup
+## Phase 1: Project Setup ✅
 
 **Goal**: Initialize project structure and dependencies.
 
 ### Backend Setup
-- [ ] Create `backend/` directory structure
-- [ ] Initialize Python project
-  - [ ] Create `requirements.txt` with dependencies:
+- [x] Create `backend/` directory structure
+- [x] Initialize Python project
+  - [x] Create `requirements.txt` with dependencies:
     - `fastapi[all]>=0.109.0`
     - `uvicorn[standard]>=0.27.0`
     - `pydantic>=2.5.0`
     - `pytest>=8.0.0`
     - `pytest-asyncio>=0.23.0`
     - `httpx>=0.26.0`
-- [ ] Set up FastAPI app skeleton (`app/main.py`)
-- [ ] Configure CORS middleware
-- [ ] Create health check endpoint (`GET /health`)
-- [ ] Verify backend runs: `uvicorn app.main:app --reload`
+- [x] Set up FastAPI app skeleton (`app/main.py`)
+- [x] Configure CORS middleware
+- [x] Create health check endpoint (`GET /health`)
+- [x] Verify backend runs: `uvicorn app.main:app --reload`
 
 ### Frontend Setup
-- [ ] Create `frontend/` directory
-- [ ] Initialize Vite + React project: `npm create vite@latest`
-- [ ] Install dependencies:
+- [x] Create `frontend/` directory
+- [x] Initialize Vite + React project: `npm create vite@latest`
+- [x] Install dependencies:
   - Core: `react`, `react-dom`
   - Editor: `@codemirror/state`, `@codemirror/view`, `@codemirror/collab`
   - Languages: `@codemirror/lang-javascript`, `@codemirror/lang-python`
   - Execution: `pyodide`
-- [ ] Create basic App component
-- [ ] Verify frontend runs: `npm run dev`
+- [x] Create basic App component
+- [x] Verify frontend runs: `npm run dev`
 
 ### Root Setup
-- [ ] Create root `package.json` with scripts:
+- [x] Create root `package.json` with scripts:
   ```json
   {
     "scripts": {
@@ -67,16 +67,17 @@ This document outlines the step-by-step implementation roadmap for the Collabora
     }
   }
   ```
-- [ ] Install `concurrently`: `npm install -D concurrently`
-- [ ] Create `.gitignore` (Python + Node.js)
-- [ ] Create `.env.example` template
+- [x] Install `concurrently`: `npm install -D concurrently`
+- [x] Create `.gitignore` (Python + Node.js)
+- [x] Create `.env.example` template
 
 **Acceptance Criteria:**
-- `npm run dev` starts both client and server
-- Health check returns: `{"status": "ok"}`
-- Frontend displays "Hello World"
+- ✅ `npm run dev` can start both client and server
+- ✅ Health check returns: `{"status": "ok"}`
+- ✅ Frontend displays "Hello World" (Vite default)
 
-**Estimated Time**: 2 hours
+**Completion Date**: 2025-12-08
+**Actual Time**: ~1.5 hours
 
 ---
 
@@ -620,10 +621,18 @@ const extensions = [
 
 ## Notes & Lessons Learned
 
-### Session Log Archive
-(Move completed session entries here from SESSION_LOG.md)
+### Important Notes
+- `SESSION_LOG.md` is ephemeral working memory and NOT version controlled (excluded in `.gitignore`)
+- Session logs should NOT be archived here to prevent commit noise
+- Use `docs/archive/` if you need to permanently save specific session notes
 
-**2025-12-08**: Initial planning completed. All context files created with comprehensive specifications.
+### Lessons Learned
+
+**2025-12-08 - Phase 0 & 1**: 
+- Initial planning completed with comprehensive documentation system
+- All context files created with specifications
+- Project setup completed with frontend (React+Vite), backend (FastAPI), and dev tooling (concurrently)
+- Decided to keep SESSION_LOG.md out of version control to prevent merge conflicts and commit noise
 
 ---
 

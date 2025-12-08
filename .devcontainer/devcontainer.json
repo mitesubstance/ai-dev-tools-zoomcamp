@@ -15,7 +15,12 @@
       "version": "3.12"
     },
 
-    // 3. Common Utils: Zsh, git, etc.
+    // 3. Latest LTS Node.js
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+
+    // 4. Common Utils: Zsh, git, etc.
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
       "installOhMyZsh": true,
