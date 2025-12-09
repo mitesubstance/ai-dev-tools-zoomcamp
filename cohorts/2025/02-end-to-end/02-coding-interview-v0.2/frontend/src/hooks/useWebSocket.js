@@ -3,24 +3,14 @@
  */
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-// Get WebSocket URL - use environment variable if set, otherwise determine from current location
+// Construct WebSocket URL dynamically from current browser location
+// Uses wss:// for HTTPS, ws:// for HTTP
+// Vite proxy handles routing in development
 function getWebSocketUrl() {
-  if (import.meta.env.VITE_WS_URL) {
-    return import.meta.env.VITE_WS_URL;
-  }
-  
-  // In development, use localhost
-  if (import.meta.env.DEV) {
-    return 'ws://localhost:8000';
-  }
-  
-  // In production, construct WebSocket URL from current location
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const host = window.location.host;
   return `${protocol}//${host}`;
 }
-
-const WS_URL = getWebSocketUrl();
 
 /**
  * WebSocket connection states
@@ -88,7 +78,8 @@ export function useWebSocket(sessionId, onMessage) {
       setConnectionState(ConnectionState.CONNECTING);
 
       try {
-        const ws = new WebSocket(`${WS_URL}/ws/${sessionId}`);
+        const wsUrl = getWebSocketUrl();
+        const ws = new WebSocket(`${wsUrl}/ws/${sessionId}`);
         wsRef.current = ws;
 
         ws.onopen = () => {
