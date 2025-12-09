@@ -4,6 +4,8 @@
  * 
  * NOTE: These tests require a running backend server at http://localhost:8000
  * Run with: npm run dev (in backend directory) before running these tests
+ * 
+ * @vitest-environment node
  */
 import { describe, it, expect, beforeAll } from 'vitest';
 
@@ -32,11 +34,15 @@ describe('Integration Tests - Client-Server Communication', () => {
       console.warn('\n⚠️  Backend server not running at http://localhost:8000');
       console.warn('   Integration tests will be skipped.');
       console.warn('   Start backend with: cd backend && uvicorn main:app --reload\n');
+    } else {
+      console.log('✅ Backend is running - integration tests will execute');
     }
   });
 
   describe('HTTP API Integration', () => {
-    it.skipIf(!backendAvailable)('should connect to health check endpoint', async () => {
+    it('should connect to health check endpoint', async function() {
+      if (!backendAvailable) this.skip();
+      
       const response = await fetch(`${API_URL}/api/health`);
       const data = await response.json();
 
@@ -45,7 +51,9 @@ describe('Integration Tests - Client-Server Communication', () => {
       expect(data).toHaveProperty('timestamp');
     });
 
-    it.skipIf(!backendAvailable)('should create a new session', async () => {
+    it('should create a new session', async function() {
+      if (!backendAvailable) this.skip();
+      
       const response = await fetch(`${API_URL}/api/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -60,7 +68,9 @@ describe('Integration Tests - Client-Server Communication', () => {
       expect(data.language).toBe('python');
     });
 
-    it.skipIf(!backendAvailable)('should retrieve session information', async () => {
+    it('should retrieve session information', async function() {
+      if (!backendAvailable) this.skip();
+      
       // First create a session
       const createResponse = await fetch(`${API_URL}/api/sessions`, {
         method: 'POST',
@@ -79,7 +89,9 @@ describe('Integration Tests - Client-Server Communication', () => {
       expect(data).toHaveProperty('active_users');
     });
 
-    it.skipIf(!backendAvailable)('should return 404 for non-existent session', async () => {
+    it('should return 404 for non-existent session', async function() {
+      if (!backendAvailable) this.skip();
+      
       const fakeSessionId = '00000000-0000-0000-0000-000000000000';
       const response = await fetch(`${API_URL}/api/sessions/${fakeSessionId}`);
 
@@ -88,7 +100,9 @@ describe('Integration Tests - Client-Server Communication', () => {
   });
 
   describe('WebSocket Integration', () => {
-    it.skipIf(!backendAvailable)('should establish WebSocket connection to valid session', async () => {
+    it('should establish WebSocket connection to valid session', async function() {
+      if (!backendAvailable) this.skip();
+      
       // Create a session first
       const createResponse = await fetch(`${API_URL}/api/sessions`, {
         method: 'POST',
@@ -130,7 +144,9 @@ describe('Integration Tests - Client-Server Communication', () => {
       });
     }, 10000);
 
-    it.skipIf(!backendAvailable)('should broadcast messages to multiple clients', async () => {
+    it('should broadcast messages to multiple clients', async function() {
+      if (!backendAvailable) this.skip();
+      
       // Create a session
       const createResponse = await fetch(`${API_URL}/api/sessions`, {
         method: 'POST',
@@ -197,7 +213,9 @@ describe('Integration Tests - Client-Server Communication', () => {
       });
     }, 15000);
 
-    it.skipIf(!backendAvailable)('should track user count correctly', async () => {
+    it('should track user count correctly', async function() {
+      if (!backendAvailable) this.skip();
+      
       // Create a session
       const createResponse = await fetch(`${API_URL}/api/sessions`, {
         method: 'POST',
@@ -247,7 +265,9 @@ describe('Integration Tests - Client-Server Communication', () => {
   });
 
   describe('Full User Flow Integration', () => {
-    it.skipIf(!backendAvailable)('should complete full collaborative session flow', async () => {
+    it('should complete full collaborative session flow', async function() {
+      if (!backendAvailable) this.skip();
+      
       // 1. Create session
       const createResponse = await fetch(`${API_URL}/api/sessions`, {
         method: 'POST',
