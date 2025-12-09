@@ -6,7 +6,8 @@
     "dev": "concurrently -c \"blue,green\" \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "cd frontend && npm run dev -- --port 5173",
     "dev:server": "cd backend && uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
-    "test": "npm run test:client && cd backend && pytest",
+    "test": "npm run test:backend",
+    "test:backend": "cd backend && pytest -v",
     "test:client": "cd frontend && npm test",
     "test:integration": "npm run test:integration:run",
     "build": "cd frontend && npm run build",
@@ -14,6 +15,7 @@
     "lint:client": "cd frontend && npm run lint",
     "lint:server": "cd backend && black . && ruff ."
   },
+
   "keywords": [
     "collaborative",
     "coding",

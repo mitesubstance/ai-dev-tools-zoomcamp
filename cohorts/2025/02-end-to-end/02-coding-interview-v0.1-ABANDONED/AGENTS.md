@@ -110,7 +110,8 @@ httpx>=0.26.0
 7. Run tests: `npm test` and `pytest`
 8. Update documentation if needed
 9. Mark task complete in `IMPLEMENTATION_PLAN.md`
-10. Commit with reference: `git commit -m "feat: implement REQ-XXX description"`
+10. **Ask user for approval before committing**
+11. After approval, commit with reference: `git commit -m "feat: implement REQ-XXX description"`
 
 ### Debugging
 1. Document error in `SESSION_LOG.md`
