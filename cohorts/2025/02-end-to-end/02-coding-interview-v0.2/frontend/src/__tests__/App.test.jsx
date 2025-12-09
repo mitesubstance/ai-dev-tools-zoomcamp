@@ -1,102 +1,245 @@
 /**
- * Frontend tests for App component
- * Tests verify the basic React app functionality
+ * Frontend tests for App component (REQ-001)
+ * Tests verify session management UI and basic functionality
  */
-import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import App from '../App'
+import * as api from '../services/api'
 
-describe('App Component', () => {
-  it('renders without crashing', () => {
-    render(<App />)
-    expect(screen.getByText(/Vite \+ React/i)).toBeInTheDocument()
+// Mock the API service
+vi.mock('../services/api', () => ({
+  createSession: vi.fn(),
+  getSession: vi.fn(),
+}))
+
+// Mock the useWebSocket hook
+vi.mock('../hooks/useWebSocket', () => ({
+  useWebSocket: vi.fn(() => ({
+    connectionState: 'disconnected',
+    userCount: 0,
+    sendMessage: vi.fn(),
+  })),
+}))
+
+// Mock the CodeEditor component
+vi.mock('../components/CodeEditor', () => ({
+  CodeEditor: ({ code, onChange }) => (
+    <div data-testid="code-editor">
+      <textarea
+        value={code}
+        onChange={(e) => onChange(e.target.value)}
+        data-testid="code-textarea"
+      />
+    </div>
+  ),
+}))
+
+// Mock the ConnectionStatus component
+vi.mock('../components/ConnectionStatus', () => ({
+  ConnectionStatus: ({ connectionState, userCount }) => (
+    <div data-testid="connection-status">
+      {connectionState} - {userCount} users
+    </div>
+  ),
+}))
+
+describe('App Component - Welcome Screen (No Session)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // Reset window.location
+    delete window.location
+    window.location = { origin: 'http://localhost:5173', pathname: '/', search: '' }
   })
 
-  it('renders the main heading', () => {
+  it('renders welcome screen when no session exists', () => {
     render(<App />)
-    const heading = screen.getByRole('heading', { name: /Vite \+ React/i })
-    expect(heading).toBeInTheDocument()
+    
+    expect(screen.getByText(/Collaborative Coding Interview Platform/i)).toBeInTheDocument()
+    expect(screen.getByText(/Create a session and share the link/i)).toBeInTheDocument()
   })
 
-  it('renders Vite logo with correct attributes', () => {
+  it('renders Create New Session button', () => {
     render(<App />)
-    const viteLogo = screen.getByAltText(/Vite logo/i)
-    expect(viteLogo).toBeInTheDocument()
-    // Vite logo is embedded as data URI in development
-    expect(viteLogo).toHaveAttribute('src')
-    expect(viteLogo.getAttribute('src')).toBeTruthy()
-  })
-
-  it('renders React logo with correct attributes', () => {
-    render(<App />)
-    const reactLogo = screen.getByAltText(/React logo/i)
-    expect(reactLogo).toBeInTheDocument()
-    expect(reactLogo.src).toContain('react.svg')
-  })
-
-  it('displays initial count of 0', () => {
-    render(<App />)
-    const button = screen.getByRole('button', { name: /count is 0/i })
+    
+    const button = screen.getByRole('button', { name: /Create New Session/i })
     expect(button).toBeInTheDocument()
+    expect(button).not.toBeDisabled()
   })
 
-  it('increments count when button is clicked', () => {
-    render(<App />)
-    const button = screen.getByRole('button', { name: /count is/i })
-    
-    // Initial state
-    expect(button).toHaveTextContent('count is 0')
-    
-    // Click once
-    fireEvent.click(button)
-    expect(button).toHaveTextContent('count is 1')
-    
-    // Click again
-    fireEvent.click(button)
-    expect(button).toHaveTextContent('count is 2')
-  })
-
-  it('increments count multiple times correctly', () => {
-    render(<App />)
-    const button = screen.getByRole('button', { name: /count is/i })
-    
-    // Click 5 times
-    for (let i = 0; i < 5; i++) {
-      fireEvent.click(button)
+  it('clicking create button calls API and displays session', async () => {
+    const mockSession = {
+      session_id: '123e4567-e89b-12d3-a456-426614174000',
+      language: 'python',
+      created_at: '2025-12-09T05:00:00Z',
+      active_users: 0,
     }
     
-    expect(button).toHaveTextContent('count is 5')
-  })
-
-  it('renders instruction text about HMR', () => {
-    render(<App />)
-    // Text is split across elements, so we use a custom text matcher
-    const hmrText = screen.getByText((content, element) => {
-      return element?.textContent === 'Edit src/App.jsx and save to test HMR'
-    })
-    expect(hmrText).toBeInTheDocument()
-  })
-
-  it('renders the read-the-docs text', () => {
-    render(<App />)
-    const docsText = screen.getByText(/Click on the Vite and React logos to learn more/i)
-    expect(docsText).toBeInTheDocument()
-  })
-
-  it('has links that open in new tab', () => {
-    render(<App />)
-    const links = screen.getAllByRole('link')
+    api.createSession.mockResolvedValue(mockSession)
     
-    // Both links should have target="_blank"
-    links.forEach(link => {
-      expect(link).toHaveAttribute('target', '_blank')
+    render(<App />)
+    
+    const button = screen.getByRole('button', { name: /Create New Session/i })
+    fireEvent.click(button)
+    
+    // Wait for API call
+    await waitFor(() => {
+      expect(api.createSession).toHaveBeenCalledWith('python')
+    })
+    
+    // After session creation, the main app should render
+    await waitFor(() => {
+      expect(screen.getByText(/Collaborative Coding Interview/i)).toBeInTheDocument()
     })
   })
 
-  it('button has correct initial text format', () => {
-    render(<App />)
-    const button = screen.getByRole('button')
+  it('displays loading state while creating session', async () => {
+    api.createSession.mockImplementation(() => new Promise(() => {})) // Never resolves
     
-    expect(button.textContent).toMatch(/^count is \d+$/)
+    render(<App />)
+    
+    const button = screen.getByRole('button', { name: /Create New Session/i })
+    fireEvent.click(button)
+    
+    // Should show loading text
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Creating.../i })).toBeInTheDocument()
+    })
+  })
+
+  it('displays error message when session creation fails', async () => {
+    api.createSession.mockRejectedValue(new Error('Network error'))
+    
+    render(<App />)
+    
+    const button = screen.getByRole('button', { name: /Create New Session/i })
+    fireEvent.click(button)
+    
+    // Wait for error to display
+    await waitFor(() => {
+      expect(screen.getByText(/Failed to create session/i)).toBeInTheDocument()
+    })
+  })
+})
+
+describe('App Component - Main Application (With Session)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // Setup location with session parameter
+    delete window.location
+    window.location = {
+      origin: 'http://localhost:5173',
+      pathname: '/',
+      search: '?session=123e4567-e89b-12d3-a456-426614174000',
+    }
+  })
+
+  it('loads session from URL parameter on mount', async () => {
+    const mockSession = {
+      session_id: '123e4567-e89b-12d3-a456-426614174000',
+      language: 'python',
+      created_at: '2025-12-09T05:00:00Z',
+      active_users: 0,
+    }
+    
+    api.getSession.mockResolvedValue(mockSession)
+    
+    render(<App />)
+    
+    // Should call getSession with the ID from URL
+    await waitFor(() => {
+      expect(api.getSession).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000')
+    })
+    
+    // Should render the main app
+    expect(screen.getByText(/Collaborative Coding Interview/i)).toBeInTheDocument()
+  })
+
+  it('renders Copy Session Link button', () => {
+    render(<App />)
+    
+    const copyButton = screen.getByRole('button', { name: /Copy Session Link/i })
+    expect(copyButton).toBeInTheDocument()
+  })
+
+  it('renders code editor', () => {
+    render(<App />)
+    
+    const editor = screen.getByTestId('code-editor')
+    expect(editor).toBeInTheDocument()
+  })
+
+  it('renders connection status indicator', () => {
+    render(<App />)
+    
+    const status = screen.getByTestId('connection-status')
+    expect(status).toBeInTheDocument()
+  })
+
+  it('copies session link to clipboard when copy button is clicked', async () => {
+    // Mock clipboard API
+    const mockWriteText = vi.fn().mockResolvedValue()
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: mockWriteText,
+      },
+    })
+    
+    // Mock alert
+    window.alert = vi.fn()
+    
+    render(<App />)
+    
+    const copyButton = screen.getByRole('button', { name: /Copy Session Link/i })
+    fireEvent.click(copyButton)
+    
+    await waitFor(() => {
+      expect(mockWriteText).toHaveBeenCalledWith(
+        'http://localhost:5173/?session=123e4567-e89b-12d3-a456-426614174000'
+      )
+      expect(window.alert).toHaveBeenCalledWith('Session link copied to clipboard!')
+    })
+  })
+
+  it('displays error when session fails to load', async () => {
+    api.getSession.mockRejectedValue(new Error('Session not found'))
+    
+    render(<App />)
+    
+    // Wait for error handling
+    await waitFor(() => {
+      expect(api.getSession).toHaveBeenCalled()
+    })
+    
+    // The app should still render (error is logged but not blocking)
+    expect(screen.getByText(/Collaborative Coding Interview/i)).toBeInTheDocument()
+  })
+})
+
+describe('App Component - Code Editing', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    delete window.location
+    window.location = {
+      origin: 'http://localhost:5173',
+      pathname: '/',
+      search: '?session=123e4567-e89b-12d3-a456-426614174000',
+    }
+  })
+
+  it('initializes with default Python comment', () => {
+    render(<App />)
+    
+    const textarea = screen.getByTestId('code-textarea')
+    expect(textarea.value).toContain('# Write your Python code here')
+  })
+
+  it('updates code when user types in editor', () => {
+    render(<App />)
+    
+    const textarea = screen.getByTestId('code-textarea')
+    fireEvent.change(textarea, { target: { value: 'print("Hello, World!")' } })
+    
+    expect(textarea.value).toBe('print("Hello, World!")')
   })
 })

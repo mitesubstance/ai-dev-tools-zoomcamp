@@ -11,9 +11,24 @@ Before writing code, you must:
 4.  **Update `SESSION_LOG.md`**: Write down your plan for this specific session.
 
 ## 3. Coding Standards
-- **Language**: [Insert Language, e.g., Python 3.11+]
-- **Style**: [Insert Style, e.g., PEP 8 / Black]
-- **Testing**: [Insert Framework, e.g., Pytest]. Tests must be written *before* implementation (TDD).
+- **Language**: 
+  - Backend: Python 3.11+ (PEP 8 / Black formatting)
+  - Frontend: JavaScript/JSX (ESLint configuration)
+- **Style**: 
+  - Backend: PEP 8 compliance, use Black formatter
+  - Frontend: ESLint rules, Prettier for formatting
+- **Testing Strategy (Full-Stack TDD)**:
+  - **Backend**: Unit tests for all API endpoints and business logic (Pytest).
+  - **Frontend**: Component tests for all UI elements (Vitest + React Testing Library).
+  - **Rule**: No code is written until a test fails (Red-Green-Refactor).
+  - **Definition of Done**: A feature is only done when BOTH backend and frontend test suites pass.
+  - **Test-First Workflow**:
+    1. Write failing backend test
+    2. Write minimal backend code to pass test
+    3. Write failing frontend test
+    4. Write minimal frontend code to pass test
+    5. Refactor both if needed
+    6. Integration test (if applicable)
 - **Comments**: Explain *why*, not *what*.
 
 ## 4. Documentation Rules
