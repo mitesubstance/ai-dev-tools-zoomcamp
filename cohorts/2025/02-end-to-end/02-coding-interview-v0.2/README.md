@@ -52,10 +52,16 @@ A real-time collaborative coding interview platform that allows multiple users t
 ## Getting Started
 
 ### Prerequisites
+
+#### Option 1: Docker (Recommended for Production)
+- **Docker**: 20.10+ (for containerized deployment)
+- **Docker Compose**: 1.29+ (optional, for easier management)
+
+#### Option 2: Local Development
 - **Node.js**: 18+ (for npm and Vite)
 - **Python**: 3.11+ (for FastAPI)
 - **npm**: 9+ (for frontend dependencies)
-- **pip**: Latest (for backend dependencies)
+- **uv**: Latest (for backend dependencies)
 
 ### Installation
 
@@ -107,10 +113,95 @@ npm run dev
 ```
 
 ### Accessing the Application
-- **Frontend**: http://localhost:5173
+- **Frontend**: http://localhost:5173 (development) or http://localhost:8000 (Docker)
 - **Backend API**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs (automatic Swagger UI)
 - **Health Check**: http://localhost:8000/api/health
+
+---
+
+## Docker Deployment
+
+### Building and Running with Docker
+
+#### Using Docker Compose (Recommended)
+
+**Build and start the container:**
+```bash
+docker-compose up --build
+```
+
+**Run in detached mode (background):**
+```bash
+docker-compose up -d
+```
+
+**View logs:**
+```bash
+docker-compose logs -f
+```
+
+**Stop the container:**
+```bash
+docker-compose down
+```
+
+#### Using Docker CLI
+
+**Build the image:**
+```bash
+docker build -t coding-interview-platform .
+```
+
+**Run the container:**
+```bash
+docker run -d -p 8000:8000 --name coding-interview-platform coding-interview-platform
+```
+
+**View logs:**
+```bash
+docker logs -f coding-interview-platform
+```
+
+**Stop and remove the container:**
+```bash
+docker stop coding-interview-platform
+docker rm coding-interview-platform
+```
+
+### Docker Architecture
+
+The Dockerfile uses a **multi-stage build** approach:
+
+1. **Stage 1 (Frontend Builder)**: 
+   - Uses Node.js Alpine image
+   - Installs frontend dependencies
+   - Builds React application for production (creates optimized static files)
+
+2. **Stage 2 (Production)**:
+   - Uses Python 3.11 slim image
+   - Installs uv for Python package management
+   - Installs backend dependencies
+   - Copies built frontend from Stage 1
+   - Serves both frontend (static files) and backend (API + WebSockets) on port 8000
+
+**Benefits:**
+- ✅ Single container for both frontend and backend
+- ✅ Optimized image size (multi-stage build)
+- ✅ Production-ready static asset serving
+- ✅ Built-in health checks
+- ✅ No external dependencies at runtime
+
+### Accessing the Dockerized Application
+
+Once the container is running:
+- **Application**: http://localhost:8000 (serves both frontend and API)
+- **API Documentation**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/api/health
+
+**Note**: In Docker mode, the FastAPI backend serves both the API endpoints and the frontend static files. No need to run a separate frontend dev server.
+
+---
 
 ## Development
 
