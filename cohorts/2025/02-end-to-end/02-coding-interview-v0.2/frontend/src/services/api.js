@@ -2,7 +2,9 @@
  * API service for session management
  */
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Use relative URL in production (empty string means same origin)
+// Use localhost in development
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:8000' : '');
 
 /**
  * Create a new coding session

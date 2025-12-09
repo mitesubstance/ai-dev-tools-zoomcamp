@@ -3,7 +3,24 @@
  */
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
+// Get WebSocket URL - use environment variable if set, otherwise determine from current location
+function getWebSocketUrl() {
+  if (import.meta.env.VITE_WS_URL) {
+    return import.meta.env.VITE_WS_URL;
+  }
+  
+  // In development, use localhost
+  if (import.meta.env.DEV) {
+    return 'ws://localhost:8000';
+  }
+  
+  // In production, construct WebSocket URL from current location
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const host = window.location.host;
+  return `${protocol}//${host}`;
+}
+
+const WS_URL = getWebSocketUrl();
 
 /**
  * WebSocket connection states
