@@ -6,7 +6,7 @@ A real-time collaborative coding interview platform that allows multiple users t
 ## Features
 - 🔗 Create and share session links
 - 👥 Multiple users can edit code simultaneously with real-time updates
-- 🎨 Syntax highlighting for Python (extensible to other languages)
+- 🎨 Syntax highlighting for Python and JavaScript (extensible to other languages)
 - ▶️ Execute Python code safely in the browser using WASM (Pyodide)
 - ⚡ Real-time communication via WebSockets
 - 🚀 Fast development experience with hot module reloading
@@ -128,11 +128,21 @@ npm run dev
 - **Testing**: Jest/Vitest (to be set up)
 
 ### Code Editor Integration
-The platform uses CodeMirror 6 for code editing. Future enhancements will add:
-- Syntax highlighting for multiple languages
+The platform uses CodeMirror 6 for code editing with the following features:
+
+**Currently Supported:**
+- ✅ Python syntax highlighting
+- ✅ JavaScript syntax highlighting
+- ✅ Dynamic language switching
+- ✅ Language-specific placeholders
+- ✅ Dark theme (OneDark)
+
+**Future Enhancements:**
 - Code autocompletion
 - Collaborative cursors
+- Additional languages (Java, C++, Go, etc.)
 - Custom themes
+- Line numbers and code folding
 
 ### Python Execution
 Python code runs entirely in the browser using Pyodide (WebAssembly):

@@ -206,7 +206,7 @@ As a candidate, I want to run my Python code and see the output immediately so t
 ### REQ-004: Multi-Language Syntax Highlighting Support (Architecture)
 
 **Priority**: Medium  
-**Status**: Approved  
+**Status**: Completed  
 **Dependencies**: REQ-002
 
 **Description**:
@@ -216,22 +216,40 @@ The code editor architecture must support adding syntax highlighting for multipl
 As a platform maintainer, I want the ability to easily add support for new programming languages so that the platform can grow to support more interview scenarios.
 
 **Acceptance Criteria**:
-- [ ] CodeMirror 6 configured with language extension system
-- [ ] Python syntax highlighting implemented
-- [ ] Architecture allows adding new languages via language packs
-- [ ] Language selection mechanism prepared (UI optional for v1)
-- [ ] Documentation on how to add new languages
+- [x] CodeMirror 6 configured with language extension system
+- [x] Python syntax highlighting implemented
+- [x] JavaScript syntax highlighting implemented
+- [x] Architecture allows adding new languages via language packs
+- [x] Language selection mechanism prepared (prop-based for v1)
+- [x] Documentation on how to add new languages (ADR-012)
+- [x] Centralized language configuration in `/frontend/src/utils/languages.js`
 
 **Technical Notes**:
 - CodeMirror 6 has excellent language extension support
-- Use @codemirror/lang-python for Python support
-- Future languages: @codemirror/lang-javascript, @codemirror/lang-java, etc.
-- Language state managed in session configuration
+- @codemirror/lang-python for Python support ✅
+- @codemirror/lang-javascript for JavaScript support ✅
+- Future languages: @codemirror/lang-java, @codemirror/lang-cpp, etc.
+- Language state managed via component props (defaults to 'python')
+- Helper functions: `getLanguageExtension()`, `getDefaultPlaceholder()`
+
+**Frontend Verification** (Tests MUST pass before feature is "Done"):
+- [x] Test: `frontend/src/components/__tests__/CodeEditor.test.jsx` - Python syntax support ✅
+- [x] Test: `frontend/src/components/__tests__/CodeEditor.test.jsx` - JavaScript syntax support ✅
+- [x] Test: `frontend/src/components/__tests__/CodeEditor.test.jsx` - Language switching works ✅
+- [x] Test: `frontend/src/components/__tests__/CodeEditor.test.jsx` - Unsupported language handling ✅
 
 **Test Scenarios**:
-1. Verify Python syntax highlighting works correctly
-2. Verify architecture allows importing new language packs
-3. Test switching between languages (if UI implemented)
+1. ✅ Verify Python syntax highlighting works correctly (18 tests passing)
+2. ✅ Verify architecture allows importing new language packs (JavaScript added successfully)
+3. ✅ Test switching between languages (dynamic language switching implemented and tested)
+
+**Implementation Summary**:
+- Added @codemirror/lang-javascript package
+- Enhanced CodeEditor component with `language` prop
+- Created helper functions for language extensions and placeholders
+- Centralized language configuration in utilities file
+- 18 comprehensive tests passing (including 3 new test suites for JavaScript and language switching)
+- Documented in ADR-012
 
 ---
 

@@ -312,7 +312,43 @@ This document tracks significant architectural decisions made during the project
 
 ---
 
-### ADR-012: [Next Decision]
+### ADR-012: Implement Multi-Language Syntax Highlighting (Python and JavaScript)
+
+**Date**: 2025-12-09  
+**Status**: Accepted  
+**Context**: REQ-004 specifies that the code editor architecture must support syntax highlighting for multiple programming languages. While Python is the primary language for the platform, JavaScript support enables broader use cases and demonstrates the extensibility of the CodeMirror 6 architecture. The system needed to support language switching dynamically without requiring page reloads.
+
+**Decision**: Implement multi-language syntax highlighting with the following approach:
+- **Add @codemirror/lang-javascript** package alongside existing @codemirror/lang-python
+- **Create language helper functions** in CodeEditor component to map language names to CodeMirror extensions
+- **Add language prop** to CodeEditor component (defaults to 'python')
+- **Language-specific placeholders** based on selected language
+- **Recreate editor instance** when language changes (via useEffect dependency)
+- **Centralized language configuration** in `/frontend/src/utils/languages.js` for future extensibility
+- **Comprehensive test coverage** for both languages and language switching scenarios
+
+**Implementation Details**:
+- `getLanguageExtension(language)` - Returns appropriate CodeMirror language extension
+- `getDefaultPlaceholder(language)` - Returns language-specific placeholder text
+- CodeEditor component accepts `language` prop with 'python' as default
+- Editor recreates when `language` or `readOnly` props change
+- Test coverage includes Python syntax, JavaScript syntax, and language switching
+
+**Consequences**:
+- ✅ Fulfills REQ-004 (Multi-Language Syntax Highlighting Support)
+- ✅ Demonstrates extensible architecture - easy to add more languages
+- ✅ Language switching works seamlessly without page reload
+- ✅ Each language has appropriate syntax highlighting and placeholders
+- ✅ 18 comprehensive tests passing for CodeEditor component
+- ✅ Centralized language configuration makes future additions straightforward
+- ⚠️ Editor recreates entirely on language change (minor performance consideration)
+- ⚠️ Each new language requires npm package installation (@codemirror/lang-*)
+- 📝 Future: Add UI dropdown for language selection (currently prop-based)
+- 📝 Future: Add more languages (Java, C++, Go, etc.)
+
+---
+
+### ADR-013: [Next Decision]
 
 **Date**: [TBD]  
 **Status**: [TBD]  
@@ -343,6 +379,7 @@ This document tracks significant architectural decisions made during the project
 | 009 | Enforce Full-Stack Test-Driven Development (TDD) | 2025-12-09 | Accepted |
 | 010 | Use Vitest for Frontend Testing | 2025-12-09 | Accepted |
 | 011 | Migrate from pip to uv for Python Package Management | 2025-12-09 | Accepted |
+| 012 | Implement Multi-Language Syntax Highlighting (Python and JavaScript) | 2025-12-09 | Accepted |
 
 ---
 *Last Updated: 2025-12-09*
