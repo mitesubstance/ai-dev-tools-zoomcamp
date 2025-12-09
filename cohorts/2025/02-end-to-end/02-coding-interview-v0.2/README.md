@@ -286,15 +286,44 @@ If you are an AI assistant helping with this project, please review the followin
 
 ## Environment Variables
 
-Create a `.env` file in the backend directory (optional):
+### Backend Configuration
+
+The backend uses the `APP_ENV` environment variable to control its behavior:
+
+**Development Mode** (default):
+- API-only mode (no frontend serving)
+- CORS enabled for local development (localhost:5173, localhost:3000)
+- Frontend should run separately (`npm run dev`)
+
+**Production Mode**:
+- Serves frontend static files from `frontend/dist`
+- CORS enabled as safety net (protects against accidental absolute URL usage)
+- Single container/process for both frontend and backend
+
+Create a `.env` file in the backend directory (see `backend/.env.example`):
 ```env
-BACKEND_PORT=8000
+# Set to 'production' when deploying
+APP_ENV=development
 ```
 
-Create a `.env` file in the frontend directory (optional):
+**For Render/Cloud Deployment**:
+Add environment variable in your platform's dashboard:
+- Key: `APP_ENV`
+- Value: `production`
+
+### Frontend Configuration
+
+The frontend uses **relative paths** for all API calls (e.g., `/api/sessions`, `/ws/{sessionId}`):
+- **Development**: Vite proxy routes these to `localhost:8000` (configured in `vite.config.js`)
+- **Production**: Same-origin requests (frontend and API served from same domain)
+
+**No environment variables needed** - the frontend automatically adapts to its environment.
+
+Legacy `.env` variables (no longer used):
 ```env
-VITE_API_URL=http://localhost:8000
-VITE_WS_URL=ws://localhost:8000
+# ❌ NOT NEEDED - Frontend uses relative paths
+# VITE_API_URL=http://localhost:8000
+# VITE_WS_URL=ws://localhost:8000
 ```
 
 ## Troubleshooting
