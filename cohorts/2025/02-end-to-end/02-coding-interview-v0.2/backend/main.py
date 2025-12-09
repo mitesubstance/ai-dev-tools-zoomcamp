@@ -17,14 +17,24 @@ app = FastAPI(
     version="0.2.0"
 )
 
-# Configure CORS for development and production
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (frontend served from same origin in production)
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Check if we're in production (frontend dist exists) or development
+frontend_dist_path = Path(__file__).parent.parent / "frontend" / "dist"
+is_production = frontend_dist_path.exists()
+
+# Configure CORS only for development
+# In production: frontend served from same origin, CORS not needed
+if not is_production:
+    # Development mode: Enable CORS for local Vite dev server
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:5173",  # Vite default port
+            "http://localhost:3000",  # Alternative dev port
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 # Include routers
 app.include_router(sessions.router)
@@ -32,16 +42,15 @@ app.include_router(websocket.router)
 
 
 # Serve frontend static files in production (when running in Docker)
-frontend_dist = Path(__file__).parent.parent / "frontend" / "dist"
-if frontend_dist.exists():
+if is_production:
     # Mount static assets (JS, CSS, images, etc.)
-    app.mount("/assets", StaticFiles(directory=str(frontend_dist / "assets")), name="assets")
+    app.mount("/assets", StaticFiles(directory=str(frontend_dist_path / "assets")), name="assets")
     
     # Serve index.html for root and any unmatched routes (SPA routing)
     @app.get("/")
     async def serve_frontend():
         """Serve the frontend application"""
-        return FileResponse(str(frontend_dist / "index.html"))
+        return FileResponse(str(frontend_dist_path / "index.html"))
     
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
@@ -55,12 +64,12 @@ if frontend_dist.exists():
             raise HTTPException(status_code=404, detail="API endpoint not found")
         
         # Check if file exists in dist (e.g., favicon, robots.txt)
-        file_path = frontend_dist / full_path
+        file_path = frontend_dist_path / full_path
         if file_path.is_file():
             return FileResponse(str(file_path))
         
         # Otherwise, serve index.html for SPA routing
-        return FileResponse(str(frontend_dist / "index.html"))
+        return FileResponse(str(frontend_dist_path / "index.html"))
 else:
     # Development mode - API only
     @app.get("/")
