@@ -126,7 +126,9 @@ describe('useWebSocket Hook', () => {
       });
 
       expect(result.current.connectionState).toBe(ConnectionState.CONNECTED);
-      expect(MockWebSocket.lastInstance.url).toBe(`ws://localhost:8000/ws/${sessionId}`);
+      // WebSocket URL should be constructed from window.location
+      const expectedUrl = `ws://${window.location.host}/ws/${sessionId}`;
+      expect(MockWebSocket.lastInstance.url).toBe(expectedUrl);
     });
 
     it('should update connection state to CONNECTED on successful connection', async () => {
