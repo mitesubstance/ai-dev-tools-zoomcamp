@@ -348,7 +348,66 @@ This document tracks significant architectural decisions made during the project
 
 ---
 
-### ADR-013: [Next Decision]
+### ADR-013: No External CDN Dependencies
+
+**Date**: 2025-12-09  
+**Status**: Accepted  
+**Context**: Modern web applications often rely on external CDNs (jsdelivr, unpkg, cdnjs) for loading libraries to reduce bundle sizes. However, this creates several issues:
+- **Reliability**: CDN outages break the application
+- **Security**: Third-party CDNs can be compromised or inject malicious code
+- **Privacy**: CDN requests leak user information and browsing patterns
+- **Offline**: Application won't work without internet connectivity
+- **Performance**: CDN requests add network latency, especially on slow connections
+- **Compliance**: Data sovereignty and GDPR concerns with external requests
+- **Development**: Inconsistent behavior between local and CDN-loaded versions
+
+Initially, Pyodide was configured to load from `https://cdn.jsdelivr.net/pyodide/v0.24.1/full/`, which caused version mismatches and created an external dependency.
+
+**Decision**: **ALL libraries and assets MUST be installed as npm packages and bundled locally. NO external CDN dependencies are permitted.**
+
+**Enforcement**:
+- All JavaScript libraries installed via `npm install`
+- All assets (fonts, icons, etc.) included in project repository
+- Pyodide loaded from locally installed `pyodide` npm package
+- Vite bundles all dependencies into build output
+- CI/CD must verify no external CDN requests (can use CSP headers or network monitoring)
+- Code reviews must reject PRs that introduce CDN dependencies
+
+**How to Add New Libraries**:
+```bash
+# CORRECT: Install as npm package
+npm install library-name
+
+# WRONG: Load from CDN in HTML
+<script src="https://cdn.example.com/library.js"></script>
+```
+
+**Exceptions**: None. Even large libraries like Pyodide (~10MB) must be bundled locally.
+
+**Consequences**:
+- ✅ Application works offline
+- ✅ No external dependencies or single points of failure
+- ✅ Better security (no third-party code injection)
+- ✅ Better privacy (no tracking via CDN requests)
+- ✅ Consistent versions between dev and production
+- ✅ Better performance on repeat visits (browser cache)
+- ✅ Compliance friendly (no data leaving infrastructure)
+- ⚠️ Larger initial bundle size (but one-time cost)
+- ⚠️ Must keep npm packages updated manually
+- ⚠️ Slightly longer build times
+
+**Verification**:
+```bash
+# Check for CDN references in code
+grep -r "https://cdn\." frontend/src/
+grep -r "jsdelivr\|unpkg\|cdnjs" frontend/src/
+
+# Should return no results
+```
+
+---
+
+### ADR-014: [Next Decision]
 
 **Date**: [TBD]  
 **Status**: [TBD]  

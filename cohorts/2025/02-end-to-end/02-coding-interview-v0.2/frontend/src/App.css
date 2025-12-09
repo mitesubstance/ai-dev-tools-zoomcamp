@@ -124,11 +124,21 @@ body, html, #root {
 .app-main {
   flex: 1;
   display: flex;
+  gap: 12px;
+  padding: 12px;
   overflow: hidden;
 }
 
 .editor-container {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 400px;
+}
+
+.output-container {
+  flex: 0 0 400px;
   display: flex;
   flex-direction: column;
   overflow: hidden;

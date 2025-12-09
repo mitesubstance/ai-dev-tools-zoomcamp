@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CodeEditor } from './components/CodeEditor';
 import { ConnectionStatus } from './components/ConnectionStatus';
+import { OutputPanel } from './components/OutputPanel';
 import { useWebSocket } from './hooks/useWebSocket';
 import { createSession, getSession } from './services/api';
 import './App.css';
@@ -140,6 +141,9 @@ function App() {
             onChange={handleCodeChange} 
             readOnly={false}
           />
+        </div>
+        <div className="output-container">
+          <OutputPanel code={code} />
         </div>
       </main>
     </div>
