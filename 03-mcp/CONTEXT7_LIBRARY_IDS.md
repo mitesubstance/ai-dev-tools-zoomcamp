@@ -14,4 +14,4 @@ use library /org/project
 | Topic / Library | Context7 Library ID |
 |---|---|
 | Conventional Commits | `/websites/conventionalcommits` |
-
+| FastMCP (Python) | `/jlowin/fastmcp` |
