@@ -15,3 +15,4 @@ use library /org/project
 |---|---|
 | Conventional Commits | `/websites/conventionalcommits` |
 | FastMCP (Python) | `/jlowin/fastmcp` |
+| Pydantic (Python) | `/pydantic/pydantic` |
