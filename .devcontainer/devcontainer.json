@@ -6,6 +6,9 @@
     "dockerfile": "Dockerfile"
   },
 
+  // Ensure we run as the non-root user to match Fluxbox/Desktop-lite permissions
+  "remoteUser": "vscode",
+
   "features": {
     // 1. Desktop Lite: The GUI desktop environment (Fluxbox/noVNC)
     "ghcr.io/devcontainers/features/desktop-lite:1": {},
@@ -34,17 +37,21 @@
 
   "forwardPorts": [
     6080, // noVNC: Access the container's Desktop GUI here
-    8000, // Django Development Server
+    8000 // Django Development Server
   ],
 
   // Combined Install:
   // 1. Update apt
   // 2. Install Chromium (for the browser)
+  // 3. Install xterm (Ensures Fluxbox has a stable terminal to launch)
   // (Removed 'uv' curl command since it is now in the Dockerfile)
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y chromium",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y chromium xterm",
 
   "customizations": {
     "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
       "extensions": [
         "vscodevim.vim",
         "iganbold.superdesign", //"Cursor for design", uses lot of API credits
