@@ -153,6 +153,21 @@ You can also run the server in http mode and link it to the inspector
 
 4. In VScode install mcp servers using the extensions or using `mcp.json` file
 
+### Context7: pin a specific docs source with a Library ID
+
+If you already know the exact docs source you want, you can provide a **Context7 Library ID** directly.
+
+**Example: Conventional Commits**
+
+- Context7 library ID: `/websites/conventionalcommits`
+
+Try it in a prompt like:
+
+```text
+Explain the Conventional Commits spec. use context7
+use library /websites/conventionalcommits
+```
+
 ### Write Code
 
 1. Pick a library of your choice (something that you know really well). I've picked Airflow in the demo
