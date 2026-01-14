@@ -73,5 +73,6 @@ def count_word(text: str, word: str) -> int:
     if not word:
         raise ValueError("word must be non-empty")
 
-    pattern = re.compile(rf"\\b{re.escape(word)}\\b", flags=re.IGNORECASE)
+    # Use word boundaries (\b) so that `data` doesn't match `database`.
+    pattern = re.compile(rf"\b{re.escape(word)}\b", flags=re.IGNORECASE)
     return len(pattern.findall(text))
