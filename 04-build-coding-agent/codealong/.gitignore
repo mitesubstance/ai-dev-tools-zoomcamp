@@ -1,6 +1,27 @@
-__pycache__/
-*.pyc
-.venv/
-
 # Q5 artifacts
 data/
+
+# --- Secrets & Environment ---
+.env
+.env.*
+!.env.example
+
+# --- Python & uv ---
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+# Optional: Ignore large data files often used in notebooks
+*.csv
+*.jsonl
+*.log
+
+# --- Distribution / Build ---
+dist/
+build/
+*.egg-info/
